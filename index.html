@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anh Hùng Javascript vs Rồng Già</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="bg-overlay"></div>
+
+    <!-- Màn hình khởi tạo nhân vật -->
+    <div id="setup-modal" class="modal active">
+        <div class="modal-content">
+            <h1>⚔️ ANH HÙNG JAVASCRIPT ⚔️</h1>
+            <p class="subtitle">Hành trình thăng cấp & Khiêu chiến Rồng Già</p>
+
+            <div class="story-box">
+                <p><strong>Hồ sơ mặc định:</strong> Nguyễn Đặng Anh Thư – MSSV: 31241026521</p>
+                <p class="level-log">✨ Khởi đầu Cấp 1 ➔ Cấp 2 (XP: 350, SP: 40) ➔ <strong>LEVEL UP Cấp 3!</strong> (XP: 650)</p>
+            </div>
+
+            <div class="form-group">
+                <label for="input-name">1. Kiểm tra trí nhớ — Hãy nhập đúng tên của bạn:</label>
+                <input type="text" id="input-name" value="Nguyễn Đặng Anh Thư" placeholder="Nhập tên nhân vật..." />
+                <small class="hint">* Nhập đúng "Nguyễn Đặng Anh Thư" nhận +5 Intel, sai bị -5 Intel!</small>
+            </div>
+
+            <div class="form-group">
+                <label>2. Chọn phân cấp anh hùng:</label>
+                <div class="class-options">
+                    <label class="class-card">
+                        <input type="radio" name="heroClass" value="a" checked />
+                        <div class="card-body">
+                            <span class="icon">🛡️</span>
+                            <strong>a. Chiến Binh</strong>
+                            <span>+15 STR | +10 AGI | -5 INT</span>
+                        </div>
+                    </label>
+                    <label class="class-card">
+                        <input type="radio" name="heroClass" value="b" />
+                        <div class="card-body">
+                            <span class="icon">🗡️</span>
+                            <strong>b. Sát Thủ</strong>
+                            <span>-15 STR | +10 AGI | -5 INT</span>
+                        </div>
+                    </label>
+                    <label class="class-card">
+                        <input type="radio" name="heroClass" value="c" />
+                        <div class="card-body">
+                            <span class="icon">🏹</span>
+                            <strong>c. Thợ Săn</strong>
+                            <span>+15 STR | +0 AGI | +15 INT</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <button id="btn-start" class="btn-primary">🚀 THĂNG CẤP 5 & VÀO TRẬN CHIẾN</button>
+        </div>
+    </div>
+
+    <!-- Đấu trường chính -->
+    <main id="arena-container" class="arena hidden">
+        <header class="arena-header">
+            <div class="hero-identity">
+                <span class="badge-level">LV.5</span>
+                <div>
+                    <h2 id="display-name">Nguyễn Đặng Anh Thư</h2>
+                    <span id="display-meta">MSSV: 31241026521 | Phân cấp: Chiến Binh</span>
+                </div>
+            </div>
+            <div class="audio-controls">
+                <button id="btn-sound" class="btn-icon" title="Bật/Tắt âm thanh">🔊 Âm thanh: BẬT</button>
+                <button id="btn-restart" class="btn-icon">🔄 Chơi lại</button>
+            </div>
+        </header>
+
+        <!-- Sàn đấu hình ảnh -->
+        <section class="battlefield" id="battlefield">
+            <!-- Nhân vật Anh Hùng -->
+            <div class="combatant hero-side" id="hero-unit">
+                <div class="hp-panel">
+                    <div class="hp-label">
+                        <span>🦸 Anh Hùng</span>
+                        <span id="hero-hp-text">105 / 105</span>
+                    </div>
+                    <div class="hp-bar-bg">
+                        <div class="hp-bar-fill hero-fill" id="hero-hp-bar" style="width: 100%;"></div>
+                    </div>
+                    <div class="stats-row">
+                        <span title="Sức mạnh (Sát thương)">⚔️ STR: <b id="stat-str">0</b></span>
+                        <span title="Nhanh nhẹn (Tỉ lệ né đòn)">💨 AGI: <b id="stat-agi">0</b>%</span>
+                        <span title="Trí tuệ (Tỉ lệ chí mạng)">⚡ INT: <b id="stat-int">0</b>%</span>
+                    </div>
+                </div>
+
+                <div class="sprite-wrapper" id="hero-sprite-wrap">
+                    <img src="./anhhung.jpg" alt="Anh Hùng Javascript" class="hero-img" id="hero-img" />
+                    <div class="effect-layer" id="hero-effect"></div>
+                    <div class="floating-texts" id="hero-float"></div>
+                </div>
+            </div>
+
+            <!-- Khu vực hiệu ứng va chạm trung tâm -->
+            <div class="center-fx" id="center-fx">
+                <div class="turn-badge" id="turn-indicator">SẴN SÀNG</div>
+            </div>
+
+            <!-- Nhân vật Rồng Già -->
+            <div class="combatant dragon-side" id="dragon-unit">
+                <div class="hp-panel">
+                    <div class="hp-label">
+                        <span>🐉 Rồng Già</span>
+                        <span id="dragon-hp-text">600 / 600</span>
+                    </div>
+                    <div class="hp-bar-bg">
+                        <div class="hp-bar-fill dragon-fill" id="dragon-hp-bar" style="width: 100%;"></div>
+                    </div>
+                    <div class="stats-row">
+                        <span>🔥 STR: <b>100</b></span>
+                        <span>💨 AGI: <b>15</b>%</span>
+                        <span>💥 INT: <b>80</b>%</span>
+                    </div>
+                </div>
+
+                <div class="sprite-wrapper" id="dragon-sprite-wrap">
+                    <!-- Vector SVG Rồng Già sắc nét -->
+                    <svg class="dragon-svg" id="dragon-svg" viewBox="0 0 320 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="dragonBodyGrad" cx="50%" cy="45%" r="55%">
+                                <stop offset="0%" stop-color="#ff5e3a" />
+                                <stop offset="55%" stop-color="#b91c1c" />
+                                <stop offset="100%" stop-color="#450a0a" />
+                            </radialGradient>
+                            <linearGradient id="wingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#991b1b" />
+                                <stop offset="100%" stop-color="#2a0404" />
+                            </linearGradient>
+                            <linearGradient id="hornGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#fde68a" />
+                                <stop offset="100%" stop-color="#92400e" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Cánh trái & phải -->
+                        <path d="M135 120 Q50 30 15 95 Q65 110 80 145 Q105 135 135 150 Z" fill="url(#wingGrad)" stroke="#f87171" stroke-width="2"/>
+                        <path d="M185 120 Q270 30 305 95 Q255 110 240 145 Q215 135 185 150 Z" fill="url(#wingGrad)" stroke="#f87171" stroke-width="2"/>
+                        <!-- Đuôi rồng -->
+                        <path d="M175 235 Q255 255 285 205 Q295 190 275 185 Q255 225 185 215 Z" fill="url(#dragonBodyGrad)" />
+                        <polygon points="285,205 305,190 292,215" fill="#fbbf24" />
+                        <!-- Thân rồng -->
+                        <ellipse cx="160" cy="185" rx="52" ry="62" fill="url(#dragonBodyGrad)" stroke="#7f1d1d" stroke-width="3"/>
+                        <!-- Giáp bụng -->
+                        <path d="M135 145 Q160 155 185 145 M130 168 Q160 178 190 168 M132 191 Q160 201 188 191 M138 214 Q160 222 182 214" stroke="#fca5a5" stroke-width="3" fill="none" opacity="0.75"/>
+                        <!-- Đầu rồng -->
+                        <path d="M120 95 Q160 55 200 95 L192 140 Q160 155 128 140 Z" fill="url(#dragonBodyGrad)" stroke="#fca5a5" stroke-width="2"/>
+                        <!-- Sừng rồng -->
+                        <path d="M132 78 Q105 30 92 22 Q115 45 122 86 Z" fill="url(#hornGrad)" />
+                        <path d="M188 78 Q215 30 228 22 Q205 45 198 86 Z" fill="url(#hornGrad)" />
+                        <!-- Mắt rồng phát sáng -->
+                        <ellipse cx="142" cy="105" rx="9" ry="6" fill="#fef08a" />
+                        <circle cx="141" cy="105" r="3" fill="#dc2626" />
+                        <ellipse cx="178" cy="105" rx="9" ry="6" fill="#fef08a" />
+                        <circle cx="179" cy="105" r="3" fill="#dc2626" />
+                        <!-- Miệng phun lửa & răng nanh -->
+                        <path d="M136 126 Q160 142 184 126 Q160 132 136 126 Z" fill="#450a0a" />
+                        <polygon points="142,127 146,136 150,128" fill="#ffffff" />
+                        <polygon points="178,127 174,136 170,128" fill="#ffffff" />
+                        <!-- Lửa âm ỉ ở mũi -->
+                        <circle cx="148" cy="118" r="3" fill="#fb923c" />
+                        <circle cx="172" cy="118" r="3" fill="#fb923c" />
+                    </svg>
+                    <div class="effect-layer" id="dragon-effect"></div>
+                    <div class="floating-texts" id="dragon-float"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bảng điều khiển & Nhật ký chiến đấu -->
+        <section class="control-panel">
+            <div class="action-buttons">
+                <button id="btn-next-turn" class="btn-attack">⚔️ ĐÁNH LƯỢT TIẾP THEO</button>
+                <button id="btn-auto-battle" class="btn-auto">⚡ TỰ ĐỘNG CHIẾN ĐẤU</button>
+            </div>
+
+            <div class="battle-log-box">
+                <div class="log-header">📜 Nhật ký chiến đấu</div>
+                <div id="battle-log" class="log-entries"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Màn hình kết quả trận đấu -->
+    <div id="result-modal" class="modal hidden">
+        <div class="modal-content result-box">
+            <div id="result-icon" class="result-emoji">🏆</div>
+            <h2 id="result-title">CHIẾN THẮNG!</h2>
+            <p id="result-message">Chúc mừng bạn đã đánh bại Rồng Già!</p>
+            <button id="btn-play-again" class="btn-primary">🔁 Tái đấu ngay</button>
+        </div>
+    </div>
+
+    <script src="anhhung.js"></script>
+</body>
+</html>
